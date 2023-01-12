@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Personels>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h!>selam knka</h>
+
+<div id="tablo" class="col-md-6">
+
+</div>
+
+<div id="kullanicidetay" class="col-md-6">
+    <div id="kullaniciDetayAlan" style="">
+        <div class="row">
+        <div class="col-md-4">
+            <h4 class="text-center lead">Mavcut IDniz</h4>
+            <h1 id"kullanıciId"></h1>
+        </div>
+        <div class="col-md-4">
+            <form>
+                <input type="hidden" id="kullaniciId"/>
+                <div class="form-group">
+                    <label>Ad Soyad</label>
+                    <input type="text" class="form-control" id="adSoyad"/>
+                </div>
+                <div class="form-group">
+                    <button id="btnKaydet" class="btn btn-success btn-sm">Kaydet button</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+function getirIdile(id) {
+    $.ajax({
+        url:"/Personels/GetirId",
+        type:"POST",
+        contentType:"application/json; charset=utf-8",
+        type:"json",
+        data: {kullaniciId:id},
+        success: function(data) {
+            let gelenNesne = jQuery.parseJSON(data);
+            $('#adSoyad').val(gelenNesne.FirstName)
+        }
+    })
+}
+
+$(document).ready(function() {
+    $.ajax({
+        url: '/Personels/GetirHepsi',
+        contentType: 'application/json; charset=utf-8',
+        type: 'Get',
+        dataType: 'json',
+        success: function(data) {
+            var objeyecevrildi = jQuery.parseJSON(data);
+            //console.log(data)
+            let table = `<table class='table table-bordered table sm'><tr> 
+            <th>Id </th>
+            <th>Ad Soyad </th>
+            <th>Aktiflik </th>`
+            $.each(objeyecevrildi,(index,value) => {
+                table += `<tr> <td> ${value.Id} </td> <td>${value.FirstName} ${value.LastName} </td> <td><button class="btn btn-warning" onclick='getirIdile(${value.Id})'>detay </button> </td> </tr>`
+            });
+            table += '</table>';
+
+            $("#tablo").html(table);
+        }
+    })
+});
+
+
+
+    </script>
+}
