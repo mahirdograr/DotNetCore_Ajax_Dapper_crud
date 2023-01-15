@@ -64,7 +64,8 @@ namespace DotNetCoreProject.Models
         {
             using (IDbConnection dbConnection = Connection)
             {
-                string sQuery = @"Update Personels Set FirstName=@name, LastName=@surname, AllowedPermitCount=@allowedpermit,Password=@password,ActiveStatus=@activestatus,Email=@mail,TotalPermitCount=@totalpermit";
+                string sQuery = @"Update Personels Set FirstName=@FirstName, LastName=@LastName, AllowedPermitCount=@AllowedPermitCount,Password=@Password,
+                  ActiveStatus=@ActiveStatus,Email=@Email,TotalPermitCount=@TotalPermitCount where Id = @Id";
                 dbConnection.Open();
                 dbConnection.Query(sQuery, pers);
             }

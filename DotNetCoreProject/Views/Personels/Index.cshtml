@@ -4,75 +4,161 @@
     ViewData["Title"] = "Index";
 }
 
-<h!>selam knka</h>
+<h1>selam knka</h1>
 
 <div id="tablo" class="col-md-6">
-
 </div>
 
 <div id="kullanicidetay" class="col-md-6">
     <div id="kullaniciDetayAlan" style="">
         <div class="row">
-        <div class="col-md-4">
-            <h4 class="text-center lead">Mavcut IDniz</h4>
-            <h1 id"kullanıciId"></h1>
+            <div class="col-md-4">
+                <h4 class="text-center lead">Mavcut IDniz</h4>
+                <h1></h1>
+            </div>
+            <div class="col-md-4">
+                <form>
+                    <input type="hidden" id="kullaniciId" />
+                    <div class="form-group">
+                        <label>Ad</label>
+                        <input type="text" class="form-control" id="adSoyad" />
+                    </div>
+                    <div class="form-group">
+                        <label>Soyad</label>
+                        <input type="text" class="form-control" id="Soyad" />
+                    </div>
+                    @* <div class="form-group">
+                    <label>email</label>
+                    <input type="text" class="form-control" id="email" />
+                    </div>*@
+                    <br />
+
+                    <br />
+                    <br />
+
+                    <h1>Nazım</h1>
+
+                    <select id="selectId" onchange="myFunction(this)"></select>
+                    <p id="demo"></p>
+                    <br />
+                    <div class="form-group">
+                        <button id="btnKaydet" class="btn btn-success btn-sm">Kaydet button</button>
+                    </div>
+                    <div class="form-group">
+                        <button id="btnGuncelle" type="button" class="btn btn-success btn-sm">Guncelle                           button</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="col-md-4">
-            <form>
-                <input type="hidden" id="kullaniciId"/>
-                <div class="form-group">
-                    <label>Ad Soyad</label>
-                    <input type="text" class="form-control" id="adSoyad"/>
-                </div>
-                <div class="form-group">
-                    <button id="btnKaydet" class="btn btn-success btn-sm">Kaydet button</button>
-                </div>
-            </form>
-        </div>
-    </div>
     </div>
 </div>
 
 @section Scripts{
     <script>
 
-function getirIdile(id) {
-    $.ajax({
-        url:"/Personels/GetirId",
-        type:"POST",
-        contentType:"application/json; charset=utf-8",
-        type:"json",
-        data: {kullaniciId:id},
-        success: function(data) {
-            let gelenNesne = jQuery.parseJSON(data);
-            $('#adSoyad').val(gelenNesne.FirstName)
-        }
-    })
-}
 
-$(document).ready(function() {
-    $.ajax({
-        url: '/Personels/GetirHepsi',
-        contentType: 'application/json; charset=utf-8',
-        type: 'Get',
-        dataType: 'json',
-        success: function(data) {
-            var objeyecevrildi = jQuery.parseJSON(data);
-            //console.log(data)
-            let table = `<table class='table table-bordered table sm'><tr> 
-            <th>Id </th>
-            <th>Ad Soyad </th>
-            <th>Aktiflik </th>`
-            $.each(objeyecevrildi,(index,value) => {
-                table += `<tr> <td> ${value.Id} </td> <td>${value.FirstName} ${value.LastName} </td> <td><button class="btn btn-warning" onclick='getirIdile(${value.Id})'>detay </button> </td> </tr>`
+
+
+
+        function getirIdile(userID) {
+            $.ajax({
+                type: "POST",
+                url: "api/Personels/GetById/" + userID
+                ,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data) {
+                    let gelenNesne = jQuery.parseJSON(data);
+                    $('#kullaniciId').val(gelenNesne.Id);
+                    $('#adSoyad').val(gelenNesne.FirstName);
+                    $('#Soyad').val(gelenNesne.LastName);
+                    $('#email').val(gelenNesne.Email);
+                }
             });
-            table += '</table>';
-
-            $("#tablo").html(table);
         }
-    })
-});
 
+
+        function GetAllPersonels() {
+            $.ajax({
+                url: '/Personels/GetAllPersonels',
+                contentType: 'application/json; charset=utf-8',
+                type: 'Get',
+                dataType: 'json',
+                success: function(data) {
+                    var objeyecevrildi = jQuery.parseJSON(data);
+                    //console.log(data)
+                    let table = `<table class='table table-bordered table sm'><tr>
+                <th>Id </th>
+                <th>Ad Soyad </th>
+                <th>Aktiflik </th>`
+                    $.each(objeyecevrildi, (index, value) => {
+                        table += `<tr> <td> ${value.Id} </td> <td>${value.FirstName} ${value.LastName} </td> <td><button class="btn btn-warning" onclick='getirIdile(${value.Id})'>detay </button> </td> </tr>`
+                    });
+                    table += '</table>';
+
+                    $("#tablo").html(table);
+                }
+            })
+        }
+
+
+        function testoption() {
+            $.ajax({
+                url: '/Personels/GetAllPersonels',
+                contentType: 'application/json; charset=utf-8',
+                type: 'Get',
+                dataType: 'json',
+                success: function(data) {
+                    var objeyecevrildi = jQuery.parseJSON(data);
+                    for (var i = 0; i < objeyecevrildi.length; i++) {
+                        $('#selectId').append(
+                            `<option id='testmail' value='${objeyecevrildi[i].Id}'>${objeyecevrildi[i].Email}</option>`
+                        );
+                    }
+                },
+            });
+        }
+
+var mailId;
+
+        function myFunction(selTag) {
+          var x = selTag.options[selTag.selectedIndex].value;
+          mailId = x
+        }
+
+
+
+        $(document).ready(function() {
+            GetAllPersonels();
+            testoption();
+
+
+            $('#btnGuncelle').click(function() {
+                let kullaniciId = $('#kullaniciId').val();
+                let adsoyad = $('#adSoyad').val();
+                let soyad = $('#Soyad').val();
+                //let mail = $('#email').val();
+                //let mail = $('#testmail').val()
+                let formData = new FormData();
+                formData.append("Id", kullaniciId);
+                formData.append("FirstName", adsoyad);
+                formData.append("LastName", soyad);
+                formData.append("Email", mailId);
+
+
+                $.ajax({
+                    url: "/Personels/PersonelUpdate",
+                    type: "Post",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function() {
+                        GetAllPersonels();
+                    }
+                })
+
+            })
+        });
 
 
     </script>
