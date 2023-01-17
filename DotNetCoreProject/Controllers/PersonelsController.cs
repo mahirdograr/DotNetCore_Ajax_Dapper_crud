@@ -49,5 +49,12 @@ namespace DotNetCoreProject.Controllers
             test.Email = pers.Email;
             personelRepository.Update(test);
         }
+
+        public IActionResult GetAllUsers()
+        {
+            var mahir = personelRepository.GetAllUsers();
+            var jsonData = JsonConvert.SerializeObject(mahir);
+            return Json(jsonData);
+        }
     }
 }

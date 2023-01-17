@@ -40,6 +40,18 @@ namespace DotNetCoreProject.Models
             }
         }
 
+        public IEnumerable<Personels> GetAllUsers()
+        {
+            using (IDbConnection dbConnection = Connection)
+            {
+                string sQuery = @"select * from Personels P
+Inner Join DepartmentPersonels DP on Dp.PersonelId = P.Id
+where p.Id=1";
+                dbConnection.Open();
+                return dbConnection.Query<Personels>(sQuery);
+            }
+        }
+
         public Personels GetById(int id)
         {
             using (IDbConnection dbConnection = Connection)
